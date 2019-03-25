@@ -18,7 +18,7 @@ const addExpense = (ctx) => {
 }
 
 bot.hears(/^\+/, addIncome)
-bot.hears(/^\-/, addExpense)
+bot.hears(/^-/, addExpense)
 
 console.log("Сервер бота запущен")
 
