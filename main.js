@@ -2,8 +2,8 @@ const Telegraf = require('telegraf')
 
 const bot = new Telegraf('874168391:AAFNfF0eMO-zd-KwyorWvnYpogGERwZJ5RI')
 
-let income =0
-let expense =0
+let income = 0
+let expense = 0
 
 const addIncome = (ctx) => {
     console.log("Пользователь", ctx.message.from.username,)
