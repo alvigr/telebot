@@ -2,22 +2,36 @@ const Telegraf = require('telegraf')
 
 const bot = new Telegraf('874168391:AAFNfF0eMO-zd-KwyorWvnYpogGERwZJ5RI')
 
-let income = 0
-let expense = 0
+let store = {};
 
 const addIncome = (ctx) => {
-    console.log("Пользователь", ctx.message.from.username,)
     console.log("Увеличить доход", ctx.message.text)
-    let transaction = Number(ctx.message.text.substring(1))
-    income += transaction
-    ctx.reply("Доход: " + income + " Расход: " + expense)
+    let username = ctx.message.from.username
+    if (store[username]) {
+      store[username].income += Number(ctx.message.text.substring(1))
+    } else {
+      store[username] = {
+        income: 0,
+        expense: 0
+      }
+      store[username].income = Number(ctx.message.text.substring(1))
+    }
+    ctx.reply("Доход: " + store[username].income + " Расход: " + store[username].expense)
 }
 
 const addExpense = (ctx) => {
     console.log("Увеличить расход", ctx.message.text)
-    let transaction = Number(ctx.message.text.substring(1))
-    expense += transaction
-    ctx.reply("Доход: " + income + " Расход: " + expense)
+    let username = ctx.message.from.username
+    if (store[username]) {
+      store[username].expense += Number(ctx.message.text.substring(1))
+    } else {
+      store[username] = {
+        income: 0,
+        expense: 0
+      }
+      store[username].expense = Number(ctx.message.text.substring(1))
+    }
+    ctx.reply("Доход: " + store[username].income + " Расход: " + store[username].expense)
 }
 
 bot.hears(/^\+/, addIncome)
