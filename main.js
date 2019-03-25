@@ -15,6 +15,9 @@ const addIncome = (ctx) => {
 
 const addExpense = (ctx) => {
     console.log("Увеличить расход", ctx.message.text)
+    let transaction = Number(ctx.message.text.substring(1))
+    expense += transaction
+    ctx.reply("Доход: " + income + " Расход: " + expense)
 }
 
 bot.hears(/^\+/, addIncome)
