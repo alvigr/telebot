@@ -21,4 +21,5 @@ bot.hears(/^\+/, addIncome)
 bot.hears(/^\-/, addExpense)
 
 console.log("Сервер бота запущен")
+
 bot.launch()
