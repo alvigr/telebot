@@ -4,9 +4,8 @@ const bot = new Telegraf('874168391:AAFNfF0eMO-zd-KwyorWvnYpogGERwZJ5RI')
 
 let store = {};
 
-const addIncome = (ctx) => {
-    console.log("Увеличить доход либо расход", ctx.message.text)
-    console.log(ctx.message.text.substring(0, 1))
+const addIncomeOrExpense = (ctx) => {
+    console.log("Увеличить доход или расход", ctx.message.text)
     let username = ctx.message.from.username
     if (store[username]) {
       if (ctx.message.text.substring(0, 1) === '+') {
@@ -28,7 +27,7 @@ const addIncome = (ctx) => {
     ctx.reply("Доход: " + store[username].income + " Расход: " + store[username].expense)
 }
 
-bot.hears(/[+-]/, addIncome)
+bot.hears(/[+-]/, addIncomeOrExpense)
 
 console.log("Сервер бота запущен")
 
