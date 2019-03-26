@@ -5,37 +5,30 @@ const bot = new Telegraf('874168391:AAFNfF0eMO-zd-KwyorWvnYpogGERwZJ5RI')
 let store = {};
 
 const addIncome = (ctx) => {
-    console.log("Увеличить доход", ctx.message.text)
+    console.log("Увеличить доход либо расход", ctx.message.text)
+    console.log(ctx.message.text.substring(0, 1))
     let username = ctx.message.from.username
     if (store[username]) {
-      store[username].income += Number(ctx.message.text.substring(1))
+      if (ctx.message.text.substring(0, 1) === '+') {
+        store[username].income += Number(ctx.message.text.substring(1))
+      } else {
+        store[username].expense += Number(ctx.message.text.substring(1))
+      }
     } else {
       store[username] = {
         income: 0,
         expense: 0
       }
-      store[username].income = Number(ctx.message.text.substring(1))
-    }
-    ctx.reply("Доход: " + store[username].income + " Расход: " + store[username].expense)
-}
-
-const addExpense = (ctx) => {
-    console.log("Увеличить расход", ctx.message.text)
-    let username = ctx.message.from.username
-    if (store[username]) {
-      store[username].expense += Number(ctx.message.text.substring(1))
-    } else {
-      store[username] = {
-        income: 0,
-        expense: 0
+      if (ctx.message.text.substring(0, 1) === '+') {
+        store[username].income = Number(ctx.message.text.substring(1))
+      } else {
+        store[username].expense = Number(ctx.message.text.substring(1))
       }
-      store[username].expense = Number(ctx.message.text.substring(1))
     }
     ctx.reply("Доход: " + store[username].income + " Расход: " + store[username].expense)
 }
 
-bot.hears(/^\+/, addIncome)
-bot.hears(/^-/, addExpense)
+bot.hears(/[+-]/, addIncome)
 
 console.log("Сервер бота запущен")
 
