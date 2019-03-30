@@ -7,27 +7,37 @@ let store = {};
 const addIncomeOrExpense = (ctx) => {
     console.log("Увеличить доход или расход", ctx.message.text)
     let username = ctx.message.from.username
-    if (store[username]) {
-      if (ctx.message.text.substring(0, 1) === '+') {
-        store[username].income += Number(ctx.message.text.substring(1))
+    if (Number(ctx.message.text.substring(1))) {
+      if (store[username]) {
+        if (ctx.message.text.substring(0, 1) === '+') {
+          store[username].income += Number(ctx.message.text.substring(1))
+        } else {
+          store[username].expense += Number(ctx.message.text.substring(1))
+        }
       } else {
-        store[username].expense += Number(ctx.message.text.substring(1))
+        store[username] = {
+          income: 0,
+          expense: 0
+        }
+        if (ctx.message.text.substring(0, 1) === '+') {
+          store[username].income = Number(ctx.message.text.substring(1))
+        } else {
+          store[username].expense = Number(ctx.message.text.substring(1))
+        }
       }
+      ctx.reply("Доход: " + store[username].income + " Расход: " + store[username].expense)
     } else {
-      store[username] = {
-        income: 0,
-        expense: 0
-      }
-      if (ctx.message.text.substring(0, 1) === '+') {
-        store[username].income = Number(ctx.message.text.substring(1))
-      } else {
-        store[username].expense = Number(ctx.message.text.substring(1))
-      }
+      ctx.reply("Вы ввели неправильное значение! Я понимаю только числа со знаком плюс или минус в начале!")
     }
-    ctx.reply("Доход: " + store[username].income + " Расход: " + store[username].expense)
+}
+
+const messageErrors = (ctx) => {
+  ctx.reply("Пока что больше ничего не умею, кроме посчета доходов и расходов! Я понимаю только числа со знаком плюс или минус в начале!")
 }
 
 bot.hears(/[+-]/, addIncomeOrExpense)
+
+bot.hears(/[^+-0-9]/, messageErrors)
 
 console.log("Сервер бота запущен")
 
