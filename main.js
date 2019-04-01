@@ -27,13 +27,7 @@ const addIncomeOrExpense = (ctx) => {
   }
 }
 
-const messageErrors = (ctx) => {
-  ctx.reply("Пока что больше ничего не умею, кроме посчета доходов и расходов! Я понимаю только числа со знаком плюс или минус в начале!")
-}
-
 bot.hears(/[+-]/, addIncomeOrExpense)
-
-//bot.hears(/[^+-0-9]/, messageErrors)
 
 bot.command('hipster', Telegraf.reply('λ'))
 
