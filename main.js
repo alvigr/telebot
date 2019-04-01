@@ -8,22 +8,16 @@ const addIncomeOrExpense = (ctx) => {
     console.log("Увеличить доход или расход", ctx.message.text)
     let username = ctx.message.from.username
     if (Number(ctx.message.text.substring(1))) {
-      if (store[username]) {
-        if (ctx.message.text.substring(0, 1) === '+') {
-          store[username].income += Number(ctx.message.text.substring(1))
-        } else {
-          store[username].expense += Number(ctx.message.text.substring(1))
-        }
-      } else {
+      if (!store[username]) {
         store[username] = {
           income: 0,
           expense: 0
         }
-        if (ctx.message.text.substring(0, 1) === '+') {
-          store[username].income = Number(ctx.message.text.substring(1))
-        } else {
-          store[username].expense = Number(ctx.message.text.substring(1))
-        }
+      }
+      if (ctx.message.text.substring(0, 1) === '+') {
+        store[username].income = Number(ctx.message.text.substring(1))
+      } else {
+        store[username].expense = Number(ctx.message.text.substring(1))
       }
       ctx.reply("Доход: " + store[username].income + " Расход: " + store[username].expense)
     } else {
