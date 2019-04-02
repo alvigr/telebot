@@ -9,7 +9,8 @@ const getUserStore = (ctx) => {
   if (!store[username]) {
     store[username] = {
       income: 0,
-      expense: 0
+      expense: 0,
+      history: []
     }
   }
   return store[username]
@@ -19,11 +20,17 @@ const replyBalance = (ctx, userStore) => {
   ctx.reply("Доход: " + userStore.income + " Расход: " + userStore.expense)
 }
 
+const replyHistory = (ctx) => {
+  let userStore = getUserStore(ctx)
+  ctx.reply('История доходов и расходов:\n' + userStore.history.join("\n"))
+}
+
 const addIncome = (ctx, value) => {
   console.log("Увеличить доход", value)
   if (value) {
     let userStore = getUserStore(ctx)
     userStore.income += value
+    userStore.history.push('+' + value)
     replyBalance(ctx, userStore)
   } else {
     ctx.reply("Вы ввели неправильное значение! Я понимаю только числа со знаком плюс или минус в начале!")
@@ -35,6 +42,7 @@ const addExpense = (ctx, value) => {
   if (value) {
     let userStore = getUserStore(ctx)
     userStore.expense += value
+    userStore.history.push('-' + value)
     replyBalance(ctx, userStore)
   } else {
     ctx.reply("Вы ввели неправильное значение! Я понимаю только числа со знаком плюс или минус в начале!")
@@ -70,6 +78,7 @@ bot.hears(/^-/, addExpenseWithSign)
 
 bot.command('income', addIncomeCommand)
 bot.command('expense', addExpensCommand)
+bot.command('history', replyHistory)
 
 console.log("Сервер бота запущен")
 
