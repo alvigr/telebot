@@ -17,6 +17,17 @@ const getUserStore = (ctx) => {
   return store[username]
 }
 
+const getData = (ctx) => {
+  let fullMessage = ctx.message.text.split(' ')
+  let data = {
+    value: Number(fullMessage[0].substring(1)),
+    valueToCommand: Number(fullMessage[1]),
+    comment: fullMessage.slice(1).join(' '),
+    commentToCommand: fullMessage.slice(2).join(' ')
+  }
+  return data
+}
+
 const replyBalance = (ctx, userStore) => {
   ctx.reply("Доход: " + userStore.income + " Расход: " + userStore.expense)
 }
@@ -25,9 +36,9 @@ const replyHistory = (ctx) => {
   let userStore = getUserStore(ctx)
   let replyHistoryWithComments = []
   for (let valueId = 0; valueId < userStore.history.length; valueId++) {
-    replyHistoryWithComments.push(userStore.history[valueId] + userStore.comments[valueId])
+    replyHistoryWithComments.push(userStore.history[valueId] + ' - ' + userStore.comments[valueId])
   }
-  ctx.reply('История доходов и расходов:\n' + replyHistoryWithComments.join("\n"))
+  ctx.reply('История доходов и расходов:\n\n' + replyHistoryWithComments.join("\n"))
 }
 
 const addIncome = (ctx, value, comment) => {
@@ -36,7 +47,7 @@ const addIncome = (ctx, value, comment) => {
     let userStore = getUserStore(ctx)
     userStore.income += value
     userStore.history.push('+' + value)
-    userStore.comments.push(' - ' + comment)
+    userStore.comments.push(comment)
     replyBalance(ctx, userStore)
   } else {
     ctx.reply("Вы ввели неправильное значение! Я понимаю только числа со знаком плюс или минус в начале!")
@@ -49,7 +60,7 @@ const addExpense = (ctx, value, comment) => {
     let userStore = getUserStore(ctx)
     userStore.expense += value
     userStore.history.push('-' + value)
-    userStore.comments.push(' - ' + comment)
+    userStore.comments.push(comment)
     replyBalance(ctx, userStore)
   } else {
     ctx.reply("Вы ввели неправильное значение! Я понимаю только числа со знаком плюс или минус в начале!")
@@ -58,38 +69,26 @@ const addExpense = (ctx, value, comment) => {
 
 const addIncomeWithSign = (ctx) => {
   console.log("Увеличить доход", ctx.message.text)
-  let fullMessage = ctx.message.text.split(' ')
-  let value = Number(fullMessage[0].substring(1))
-  let comment = fullMessage.slice(1).join(' ')
-  console.log(comment)
-  addIncome(ctx, value, comment)
+  let data = getData(ctx)
+  addIncome(ctx, data.value, data.comment)
 }
 
 const addExpenseWithSign = (ctx) => {
   console.log("Увеличить расход", ctx.message.text)
-  let fullMessage = ctx.message.text.split(' ')
-  let value = Number(fullMessage[0].substring(1))
-  let comment = fullMessage.slice(1).join(' ')
-  console.log(comment)
-  addExpense(ctx, value, comment)
+  let data = getData(ctx)
+  addExpense(ctx, data.value, data.comment)
 }
 
 const addIncomeCommand = (ctx) => {
   console.log("Увеличить доход", ctx.message.text)
-  let fullMessage = ctx.message.text.split(' ')
-  let value = Number(fullMessage[1])
-  let comment = fullMessage.slice(2).join(' ')
-  console.log(comment)
-  addIncome(ctx, value, comment)
+  let data = getData(ctx)
+  addIncome(ctx, data.valueToCommand, data.commentToCommand)
 }
 
 const addExpensCommand = (ctx) => {
   console.log("Увеличить расход", ctx.message.text)
-  let fullMessage = ctx.message.text.split(' ')
-  let value = Number(fullMessage[1])
-  let comment = fullMessage.slice(2).join(' ')
-  console.log(comment)
-  addExpense(ctx, value, comment)
+  let data = getData(ctx)
+  addExpense(ctx, data.valueToCommand, data.commentToCommand)
 }
 
 bot.hears(/^\+/, addIncomeWithSign)
