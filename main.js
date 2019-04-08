@@ -18,13 +18,12 @@ const getUserStore = (ctx) => {
 
 const getData = (ctx) => {
   let fullMessage = ctx.message.text.split(' ')
-  let data = {
+  return {
     value: Number(fullMessage[0].substring(1)),
     valueToCommand: Number(fullMessage[1]),
     comment: fullMessage.slice(1).join(' '),
     commentToCommand: fullMessage.slice(2).join(' ')
   }
-  return data
 }
 
 const replyBalance = (ctx, userStore) => {
@@ -34,6 +33,9 @@ const replyBalance = (ctx, userStore) => {
 const replyHistory = (ctx) => {
   let userStore = getUserStore(ctx)
   let replyHistoryWithComments = userStore.history.map((transaction) => {
+    if (transaction.comment === '' || transaction.comment === null) {
+      return transaction.value
+    }
     return transaction.value + ' - ' + transaction.comment
   })
   ctx.reply('История доходов и расходов:\n\n' + replyHistoryWithComments.join("\n"))
