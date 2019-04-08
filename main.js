@@ -11,7 +11,6 @@ const getUserStore = (ctx) => {
       income: 0,
       expense: 0,
       history: [],
-      comments: []
     }
   }
   return store[username]
@@ -34,10 +33,9 @@ const replyBalance = (ctx, userStore) => {
 
 const replyHistory = (ctx) => {
   let userStore = getUserStore(ctx)
-  let replyHistoryWithComments = []
-  for (let valueId = 0; valueId < userStore.history.length; valueId++) {
-    replyHistoryWithComments.push(userStore.history[valueId] + ' - ' + userStore.comments[valueId])
-  }
+  let replyHistoryWithComments = userStore.history.map((transaction) => {
+    return transaction.value + ' - ' + transaction.comment
+  })
   ctx.reply('История доходов и расходов:\n\n' + replyHistoryWithComments.join("\n"))
 }
 
@@ -46,8 +44,10 @@ const addIncome = (ctx, value, comment) => {
   if (value) {
     let userStore = getUserStore(ctx)
     userStore.income += value
-    userStore.history.push('+' + value)
-    userStore.comments.push(comment)
+    userStore.history.push({
+      value: '+' + value,
+      comment
+    })
     replyBalance(ctx, userStore)
   } else {
     ctx.reply("Вы ввели неправильное значение! Я понимаю только числа со знаком плюс или минус в начале!")
@@ -59,8 +59,10 @@ const addExpense = (ctx, value, comment) => {
   if (value) {
     let userStore = getUserStore(ctx)
     userStore.expense += value
-    userStore.history.push('-' + value)
-    userStore.comments.push(comment)
+    userStore.history.push({
+      value: '-' + value,
+      comment
+    })
     replyBalance(ctx, userStore)
   } else {
     ctx.reply("Вы ввели неправильное значение! Я понимаю только числа со знаком плюс или минус в начале!")
