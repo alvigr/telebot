@@ -82,23 +82,10 @@ const addExpenseWithSign = (ctx) => {
   addExpense(ctx, data.value, data.comment)
 }
 
-const addIncomeCommand = (ctx) => {
-  console.log("Увеличить доход", ctx.message.text)
-  let data = getData(ctx)
-  addIncome(ctx, data.valueToCommand, data.commentToCommand)
-}
-
-const addExpensCommand = (ctx) => {
-  console.log("Увеличить расход", ctx.message.text)
-  let data = getData(ctx)
-  addExpense(ctx, data.valueToCommand, data.commentToCommand)
-}
 
 bot.hears(/^\+/, addIncomeWithSign)
 bot.hears(/^-/, addExpenseWithSign)
 
-bot.command('income', addIncomeCommand)
-bot.command('expense', addExpensCommand)
 bot.command('history', replyHistory)
 
 console.log("Сервер бота запущен")
