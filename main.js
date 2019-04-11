@@ -1,20 +1,8 @@
 const Telegraf = require('telegraf')
+const sqlite3 = require('sqlite3').verbose()
 
+const db = new sqlite3.Database('db.sqlite')
 const bot = new Telegraf('874168391:AAFNfF0eMO-zd-KwyorWvnYpogGERwZJ5RI')
-
-let store = {};
-
-const getUserStore = (ctx) => {
-  let username = ctx.message.from.username
-  if (!store[username]) {
-    store[username] = {
-      income: 0,
-      expense: 0,
-      history: [],
-    }
-  }
-  return store[username]
-}
 
 const getData = (ctx) => {
   let fullMessage = ctx.message.text.split(' ')
@@ -26,31 +14,46 @@ const getData = (ctx) => {
   }
 }
 
-const replyBalance = (ctx, userStore) => {
-  ctx.reply("Доход: " + userStore.income + " Расход: " + userStore.expense)
+const addTransaction = (username, value, comment) => {
+  db.run(
+    "INSERT INTO transactions (username, amount, comment) VALUES (?, ?, ?)",
+    username, value, comment
+  )
+}
+
+const replyBalance = (ctx, username) => {
+  db.get("SELECT SUM(CASE WHEN amount > 0 THEN amount ELSE 0 END) AS income, " +
+    "SUM(CASE WHEN amount < 0 THEN amount ELSE 0 END) AS expense  " +
+    "FROM transactions WHERE username = ?", username, (err, row) => {
+    console.log(row,err)
+    ctx.reply("Доход: " + row.income + " Расход: " + row.expense)
+  })
+
 }
 
 const replyHistory = (ctx) => {
-  let userStore = getUserStore(ctx)
-  let replyHistoryWithComments = userStore.history.map((transaction) => {
-    if (transaction.comment === '' || transaction.comment === null) {
-      return transaction.value
+  const username = ctx.message.from.username
+  db.all(
+    'SELECT amount, comment FROM transactions WHERE username = ? ORDER BY id', username, (err, rows) => {
+      console.log(err, rows)
+      let replyHistoryWithComments = rows.map((transaction) => {
+        if (transaction.comment === '') {
+          return transaction.amount
+        }
+        return transaction.amount + ' - ' + transaction.comment
+      })
+      ctx.reply('История доходов и расходов:\n\n' + replyHistoryWithComments.join("\n"))
     }
-    return transaction.value + ' - ' + transaction.comment
-  })
-  ctx.reply('История доходов и расходов:\n\n' + replyHistoryWithComments.join("\n"))
+  )
+
 }
 
 const addIncome = (ctx, value, comment) => {
   console.log("Увеличить доход", value)
+  const username = ctx.message.from.username
   if (value) {
-    let userStore = getUserStore(ctx)
-    userStore.income += value
-    userStore.history.push({
-      value: '+' + value,
-      comment
-    })
-    replyBalance(ctx, userStore)
+    addTransaction(username, value, comment)
+    replyBalance(ctx, username)
   } else {
     ctx.reply("Вы ввели неправильное значение! Я понимаю только числа со знаком плюс или минус в начале!")
   }
@@ -58,14 +61,10 @@ const addIncome = (ctx, value, comment) => {
 
 const addExpense = (ctx, value, comment) => {
   console.log("Увеличить расход", value)
+  const username = ctx.message.from.username
   if (value) {
-    let userStore = getUserStore(ctx)
-    userStore.expense += value
-    userStore.history.push({
-      value: '-' + value,
-      comment
-    })
-    replyBalance(ctx, userStore)
+    addTransaction(username, value*(-1), comment)
+    replyBalance(ctx, username)
   } else {
     ctx.reply("Вы ввели неправильное значение! Я понимаю только числа со знаком плюс или минус в начале!")
   }
