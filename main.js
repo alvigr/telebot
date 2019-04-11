@@ -7,10 +7,9 @@ const bot = new Telegraf('874168391:AAFNfF0eMO-zd-KwyorWvnYpogGERwZJ5RI')
 const getData = (ctx) => {
   let fullMessage = ctx.message.text.split(' ')
   return {
+    username: ctx.message.from.username,
     value: Number(fullMessage[0].substring(1)),
-    valueToCommand: Number(fullMessage[1]),
-    comment: fullMessage.slice(1).join(' '),
-    commentToCommand: fullMessage.slice(2).join(' ')
+    comment: fullMessage.slice(1).join(' ')
   }
 }
 
@@ -48,9 +47,8 @@ const replyHistory = (ctx) => {
 
 }
 
-const addIncome = (ctx, value, comment) => {
+const addIncome = (ctx, username, value, comment) => {
   console.log("Увеличить доход", value)
-  const username = ctx.message.from.username
   if (value) {
     addTransaction(username, value, comment)
     replyBalance(ctx, username)
@@ -59,9 +57,8 @@ const addIncome = (ctx, value, comment) => {
   }
 }
 
-const addExpense = (ctx, value, comment) => {
+const addExpense = (ctx, username, value, comment) => {
   console.log("Увеличить расход", value)
-  const username = ctx.message.from.username
   if (value) {
     addTransaction(username, value*(-1), comment)
     replyBalance(ctx, username)
@@ -70,21 +67,16 @@ const addExpense = (ctx, value, comment) => {
   }
 }
 
-const addIncomeWithSign = (ctx) => {
-  console.log("Увеличить доход", ctx.message.text)
-  let data = getData(ctx)
-  addIncome(ctx, data.value, data.comment)
+const createHandler = (handler, descr) => {
+  return (ctx) => {
+    console.log(descr, ctx.message.text)
+    let data = getData(ctx)
+    handler(ctx, data.username, data.value, data.comment)
+  }
 }
 
-const addExpenseWithSign = (ctx) => {
-  console.log("Увеличить расход", ctx.message.text)
-  let data = getData(ctx)
-  addExpense(ctx, data.value, data.comment)
-}
-
-
-bot.hears(/^\+/, addIncomeWithSign)
-bot.hears(/^-/, addExpenseWithSign)
+bot.hears(/^\+/, createHandler(addIncome, 'Увеличить доход'))
+bot.hears(/^-/, createHandler(addExpense, 'Увеличить расход'))
 
 bot.command('history', replyHistory)
 
