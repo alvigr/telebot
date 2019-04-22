@@ -2,6 +2,7 @@ const sqlite3 = require('sqlite3').verbose()
 const fastify = require('fastify')({
   logger: true
 })
+fastify.register(require('fastify-cors'), {})
 
 const db = new sqlite3.Database('db.sqlite')
 
