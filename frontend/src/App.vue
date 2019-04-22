@@ -51,10 +51,7 @@ export default {
       type: 'Income',
       amount: null,
       comment: null,
-      transactions: [
-        {amount: 100, comment: 'Found'},
-        {amount: -200, comment: 'Lost'}
-      ]
+      transactions: []
     }
   },
   computed: {
@@ -64,6 +61,9 @@ export default {
     totalIncome: function () {
       return this.transactions.filter(trans => trans.amount > 0).reduce(sum, 0)
     }
+  },
+  mounted: function () {
+    this.loadTransactions()
   },
   methods: {
     add: function (event) {
@@ -78,7 +78,28 @@ export default {
       if (this.type === 'Expense') {
         amount = amount * (-1)
       }
-      this.transactions.push({amount, comment: this.comment})
+      this.postTransaction({amount, comment: this.comment})
+    },
+    loadTransactions: function () {
+      console.log('Запрос стартовал')
+      fetch('http://127.0.0.1:3000/transactions').then((response) => {
+        response.json().then((data) => {
+          this.transactions = data
+        })
+      } )
+    },
+    postTransaction: function (transaction) {
+      fetch('http://127.0.0.1:3000/transactions', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(transaction)
+      }).then((response) => {
+        console.log('Добавлена запись')
+        this.loadTransactions()
+      })
     }
   }
 }
