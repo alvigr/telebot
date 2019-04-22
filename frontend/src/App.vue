@@ -86,7 +86,10 @@ export default {
         response.json().then((data) => {
           this.transactions = data
         })
-      } )
+      } ).catch((error) => {
+        alert('Произошла ошибка при загрузке данных')
+        console.log(error)
+      })
     },
     postTransaction: function (transaction) {
       fetch('http://127.0.0.1:3000/transactions', {
@@ -99,6 +102,9 @@ export default {
       }).then((response) => {
         console.log('Добавлена запись')
         this.loadTransactions()
+      }).catch((error) => {
+        alert('Произошла ошибка при добавлении данных')
+        console.log(error)
       })
     }
   }
