@@ -6,12 +6,12 @@
     </div>
     <div class="form">
       <form>
-        <select v-model="type">
+        <select v-model="type" v-bind:disabled="addInProgress">
           <option>Income</option>
           <option>Expense</option>
         </select>
-        <input class="amount" v-model="amount" type="number" placeholder="amount"/>
-        <input v-model="comment" type="text" placeholder="comment"/>
+        <input class="amount" v-model="amount" type="number" placeholder="amount" v-bind:disabled="addInProgress"/>
+        <input v-model="comment" type="text" placeholder="comment" v-bind:disabled="addInProgress"/>
         <button v-on:click="add">add</button>
       </form>
     </div>
@@ -51,7 +51,8 @@ export default {
       type: 'Income',
       amount: null,
       comment: null,
-      transactions: []
+      transactions: [],
+      addInProgress: false
     }
   },
   computed: {
@@ -68,12 +69,15 @@ export default {
   methods: {
     add: function (event) {
       event.preventDefault()
+      if (this.addInProgress) {
+        return
+      }
       console.log('add', this.type)
-
-      if (this.amount === null) {
+      if (this.amount === null || this.amount === '') {
         alert('You should set amount!')
         return
       }
+      this.addInProgress = true
       let amount = this.amount * 1
       if (this.type === 'Expense') {
         amount = amount * (-1)
@@ -101,8 +105,10 @@ export default {
         body: JSON.stringify(transaction)
       }).then((response) => {
         console.log('Добавлена запись')
+        this.addInProgress = false
         this.loadTransactions()
       }).catch((error) => {
+        this.addInProgress = false
         alert('Произошла ошибка при добавлении данных')
         console.log(error)
       })
