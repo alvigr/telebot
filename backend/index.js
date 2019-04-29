@@ -14,7 +14,7 @@ fastify.get('/', (request, reply) => {
 
 fastify.get('/transactions', (request, reply) => {
   db.all(
-    'SELECT amount, comment FROM transactions ORDER BY id', (err, rows) => {
+    'SELECT amount, comment FROM transactions WHERE username = ? ORDER BY id', USERNAME, (err, rows) => {
       console.log(err)
       reply.send(rows)
     }
