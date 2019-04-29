@@ -1,20 +1,25 @@
-const sqlite3 = require('sqlite3').verbose()
-const db = new sqlite3.Database('db.sqlite')
+const axios = require('axios')
 
 exports.addTransaction = (username, value, comment) => {
-  db.run(
-    "INSERT INTO transactions (username, amount, comment) VALUES (?, ?, ?)",
-    username, value, comment
-  )
+  axios.post('http://127.0.0.1:3000/transactions', {
+    amount: value,
+    comment
+  })
+    .then((response) => {
+      console.log('Запись добавлена')
+  })
 }
 
 exports.getBalance = (username, handler) => {
-  db.get("SELECT SUM(CASE WHEN amount > 0 THEN amount ELSE 0 END) AS income, " +
-    "SUM(CASE WHEN amount < 0 THEN amount ELSE 0 END) AS expense  " +
-    "FROM transactions WHERE username = ?", username, handler)
+  axios.get('http://127.0.0.1:3000/balance')
+    .then((response) => {
+      handler(null, response.data)
+  })
 }
 
 exports.history = (username, handler) => {
-  db.all(
-    'SELECT amount, comment FROM transactions WHERE username = ? ORDER BY id', username, handler)
+  axios.get('http://127.0.0.1:3000/transactions')
+    .then((response) => {
+      handler(null, response.data)
+  })
 }
