@@ -30,6 +30,29 @@ fastify.post('/transactions', (request, reply) => {
   reply.send({status: 'ok'})
 })
 
+fastify.post('/secrets', (request, reply) => {
+  console.log(request.body)
+  db.get(
+    'SELECT key FROM secrets WHERE username = ?',
+    request.body.username, (err, row) => {
+      console.log(err)
+      console.log(row)
+      if (row) {
+        db.run(
+          'UPDATE secrets SET key = ? WHERE username = ?',
+          request.body.key, request.body.username
+        )
+      } else {
+        db.run(
+          'INSERT INTO secrets (username, key) VALUES (?, ?)',
+          request.body.username, request.body.key
+        )
+      }
+      reply.send({status: 'ok'})
+    }
+  )
+})
+
 fastify.get('/balance', (request, reply) => {
     db.get("SELECT SUM(CASE WHEN amount > 0 THEN amount ELSE 0 END) AS income, " +
       "SUM(CASE WHEN amount < 0 THEN amount ELSE 0 END) AS expense  " +
