@@ -5,7 +5,26 @@ const fastify = require('fastify')({
 fastify.register(require('fastify-cors'), {})
 
 const db = new sqlite3.Database('db.sqlite')
-const USERNAME = 'ivan'
+
+fastify.addHook('preHandler', (request, reply, next) => {
+  console.log('Авторизация')
+
+  let secret = request.headers.secret.split(':')
+  const [username, key] = secret
+  db.get(
+    'SELECT key FROM secrets WHERE username = ? AND key = ?',
+    username, key, (err, row) => {
+      if (row) {
+        request.params.username = username
+        request.params.key = key
+        next()
+      } else {
+        reply.code(403)
+        reply.send({error: 'Неправильный логин или пароль'})
+      }
+    }
+  )
+})
 
 // Declare a route
 fastify.get('/', (request, reply) => {
@@ -14,7 +33,7 @@ fastify.get('/', (request, reply) => {
 
 fastify.get('/transactions', (request, reply) => {
   db.all(
-    'SELECT amount, comment FROM transactions WHERE username = ? ORDER BY id', USERNAME, (err, rows) => {
+    'SELECT amount, comment FROM transactions WHERE username = ? ORDER BY id', request.params.username, (err, rows) => {
       console.log(err)
       reply.send(rows)
     }
@@ -25,7 +44,7 @@ fastify.post('/transactions', (request, reply) => {
   console.log(request.body)
   db.run(
     "INSERT INTO transactions (username, amount, comment) VALUES (?, ?, ?)",
-    USERNAME, request.body.amount, request.body.comment
+    request.params.username, request.body.amount, request.body.comment
   )
   reply.send({status: 'ok'})
 })
@@ -56,7 +75,7 @@ fastify.post('/secrets', (request, reply) => {
 fastify.get('/balance', (request, reply) => {
     db.get("SELECT SUM(CASE WHEN amount > 0 THEN amount ELSE 0 END) AS income, " +
       "SUM(CASE WHEN amount < 0 THEN amount ELSE 0 END) AS expense  " +
-      "FROM transactions WHERE username = ?", USERNAME, (err, row) => {
+      "FROM transactions WHERE username = ?", request.params.username, (err, row) => {
       console.log(err)
       reply.send(row)
     })
