@@ -23,3 +23,10 @@ exports.history = (username, handler) => {
       handler(null, response.data)
   })
 }
+
+exports.setSecret = (username, key) => {
+  return axios.post('http://127.0.0.1:3000/secrets', {
+    username,
+    key
+  })
+}

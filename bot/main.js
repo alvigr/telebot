@@ -3,6 +3,20 @@ const store = require('./store.js')
 
 const bot = new Telegraf('874168391:AAFNfF0eMO-zd-KwyorWvnYpogGERwZJ5RI')
 
+const getRandomInt = (min, max) => {
+  return Math.floor(Math.random() * (max - min)) + min
+}
+
+const generateKey = () => {
+  const symbols = 'qwertyuiopasdfghjklzxcvbnm1234567890'
+  let key = ''
+  for (let i = 0; i < 32; i++) {
+    key += symbols[getRandomInt(0, symbols.length - 1)]
+  }
+  return key
+}
+
+
 const getData = (ctx) => {
   let fullMessage = ctx.message.text.split(' ')
   return {
@@ -30,6 +44,15 @@ const replyHistory = (ctx) => {
       return transaction.amount + ' - ' + transaction.comment
     })
     ctx.reply('История доходов и расходов:\n\n' + replyHistoryWithComments.join("\n"))
+  })
+}
+
+const keyCommand = (ctx) => {
+  const key = generateKey()
+  store.setSecret(ctx.message.from.username, key).then(() => {
+    ctx.reply('Ваш ключ: ' + key)
+  }).catch(() => {
+    ctx.reply('Сервис недоступен')
   })
 }
 
@@ -65,6 +88,7 @@ bot.hears(/^\+/, createHandler(addIncome, 'Увеличить доход'))
 bot.hears(/^-/, createHandler(addExpense, 'Увеличить расход'))
 
 bot.command('history', replyHistory)
+bot.command('key', keyCommand)
 
 console.log("Сервер бота запущен")
 
