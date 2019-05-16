@@ -1,31 +1,33 @@
-const axios = require('axios')
+const axios = require('axios').create({
+  baseURL: 'http://127.0.0.1:3000'
+})
 
 exports.addTransaction = (username, value, comment) => {
-  axios.post('http://127.0.0.1:3000/transactions', {
+  axios.post('/transactions', {
     amount: value,
     comment
   })
-    .then((response) => {
+    .then(() => {
       console.log('Запись добавлена')
   })
 }
 
 exports.getBalance = (username, handler) => {
-  axios.get('http://127.0.0.1:3000/balance')
+  axios.get('/balance')
     .then((response) => {
       handler(null, response.data)
   })
 }
 
 exports.history = (username, handler) => {
-  axios.get('http://127.0.0.1:3000/transactions')
+  axios.get('/transactions')
     .then((response) => {
       handler(null, response.data)
   })
 }
 
 exports.setSecret = (username, key) => {
-  return axios.post('http://127.0.0.1:3000/secrets', {
+  return axios.post('/secrets', {
     username,
     key
   })
