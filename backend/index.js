@@ -8,7 +8,6 @@ const db = new sqlite3.Database('db.sqlite')
 
 fastify.addHook('preHandler', (request, reply, next) => {
   console.log('Авторизация')
-
   let secret = request.headers.secret.split(':')
   const [username, key] = secret
   db.get(
@@ -17,6 +16,12 @@ fastify.addHook('preHandler', (request, reply, next) => {
       if (row) {
         request.params.username = username
         request.params.key = key
+        request.params.bot = false
+        if (username === 'bot') {
+          request.params.username = request.headers['original-username']
+          request.params.bot = true
+        }
+        console.log(username, request.params.username)
         next()
       } else {
         reply.code(403)
@@ -50,6 +55,10 @@ fastify.post('/transactions', (request, reply) => {
 })
 
 fastify.post('/secrets', (request, reply) => {
+  if (request.params.bot === false) {
+    reply.code(403)
+    reply.send({error:'Доступ запрещен'})
+  }
   console.log(request.body)
   db.get(
     'SELECT key FROM secrets WHERE username = ?',
