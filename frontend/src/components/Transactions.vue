@@ -96,7 +96,13 @@
         if (this.type === 'Expense') {
           amount = amount * (-1)
         }
-        this.postTransaction({amount, comment: this.comment})
+        this.postTransaction({amount, comment: this.comment}).then((result) => {
+          console.log('Clear')
+          if (result !== false) {
+            this.amount = null
+            this.comment = null
+          }
+        })
       },
       loadTransactions: function () {
         console.log('Запрос стартовал')
@@ -110,7 +116,8 @@
         })
       },
       postTransaction: function (transaction) {
-        fetch('http://127.0.0.1:3000/transactions', {
+        console.log('Start')
+        return  fetch('http://127.0.0.1:3000/transactions', {
           method: 'POST',
           headers: {
             'Accept': 'application/json',
@@ -122,10 +129,12 @@
           console.log('Добавлена запись')
           this.addInProgress = false
           this.loadTransactions()
+          return response
         }).catch((error) => {
           this.addInProgress = false
           alert('Произошла ошибка при добавлении данных')
           console.log(error)
+          return false
         })
       },
       onSelectType: function (type) {
