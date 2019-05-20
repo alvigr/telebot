@@ -4,8 +4,8 @@
       <div class="header">
         <h1>MoneyTracker</h1>
       </div>
-      <User v-on:login="onLogin" v-on:logout="onLogout"></User>
-      <Transactions v-if="authenticated" :user="user"></Transactions>
+      <User></User>
+      <Transactions v-if="$user.authenticated"></Transactions>
     </div>
   </div>
 </template>
@@ -18,22 +18,6 @@
 export default {
   name: 'app',
   components: {Transactions, User},
-  data: () => {
-    return {
-      user: {},
-      authenticated: false
-    }
-  },
-  methods: {
-    onLogin: function (user) {
-      this.user = user
-      this.authenticated = true
-    },
-    onLogout: function () {
-      this.user = {}
-      this.authenticated = false
-    },
-  }
 }
 </script>
 

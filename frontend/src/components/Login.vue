@@ -25,14 +25,11 @@
       login: function () {
         console.log(this.username, this.key)
         fetch('http://127.0.0.1:3000/transactions', {headers: {'Secret': this.username + ':' + this.key}}).then((response) => {
-          response.json().then((data) => {
+          response.json().then(() => {
             console.log('Логин с паролем верны')
-            this.$emit('login', {
-              username: this.username,
-              key: this.key
-            })
+            this.$user.setup(this.username, this.key)
           })
-        } ).catch((error) => {
+        } ).catch(() => {
           alert('Неправильный логин или пароль')
         })
       }

@@ -41,7 +41,6 @@
 
   export default {
     name: 'Transactions',
-    props: ['user'],
     data: () => {
       return {
         type: 'Income',
@@ -82,7 +81,7 @@
       },
       loadTransactions: function () {
         console.log('Запрос стартовал')
-        fetch('http://127.0.0.1:3000/transactions', {headers: {'Secret': this.user.username + ':' + this.user.key}}).then((response) => {
+        fetch('http://127.0.0.1:3000/transactions', {headers: {'Secret': this.$user.username + ':' + this.$user.key}}).then((response) => {
           response.json().then((data) => {
             this.transactions = data
           })
@@ -97,7 +96,7 @@
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-            'Secret': this.user.username + ':' + this.user.key
+            'Secret': this.$user.username + ':' + this.$user.key
           },
           body: JSON.stringify(transaction)
         }).then((response) => {
