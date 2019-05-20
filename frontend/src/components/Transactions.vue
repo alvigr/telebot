@@ -1,6 +1,5 @@
 <template>
     <div>
-        <h3>{{ user.username }}</h3>
         <div class="form">
             <form>
                 <select v-model="type" v-bind:disabled="addInProgress">
