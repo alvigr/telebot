@@ -13,8 +13,9 @@
         </div>
         <div class="history">
             <h2>History</h2>
+            <TypeFilter v-on:select="onSelectType" :selected-type="selectedType"></TypeFilter>
             <ul>
-                <li v-for="transaction in transactions">
+                <li v-for="transaction in filteredTransactions">
                     {{ transaction.amount }}
                     <span v-if="transaction.comment">({{ transaction.comment }})</span>
                 </li>
@@ -34,6 +35,7 @@
 </template>
 
 <script>
+  import TypeFilter from './TypeFilter'
   const sum = (sum, trans) => {
     return sum + trans.amount
   }
@@ -41,21 +43,38 @@
 
   export default {
     name: 'Transactions',
+    components: { TypeFilter },
     data: () => {
       return {
         type: 'Income',
         amount: null,
         comment: null,
         transactions: [],
-        addInProgress: false
+        addInProgress: false,
+        selectedType: 'All',
       }
     },
     computed: {
+      expense: function () {
+        return this.transactions.filter(trans => trans.amount < 0)
+      },
+      income: function () {
+        return this.transactions.filter(trans => trans.amount > 0)
+      },
       totalExpense: function () {
-        return this.transactions.filter(trans => trans.amount < 0).reduce(sum, 0) * (-1)
+        return this.expense.reduce(sum, 0) * (-1)
       },
       totalIncome: function () {
-        return this.transactions.filter(trans => trans.amount > 0).reduce(sum, 0)
+        return this.income.reduce(sum, 0)
+      },
+      filteredTransactions: function () {
+        if (this.selectedType === 'Income') {
+          return this.income
+        }
+        if (this.selectedType === 'Expense') {
+          return this.expense
+        }
+        return this.transactions
       }
     },
     mounted: function () {
@@ -108,6 +127,9 @@
           alert('Произошла ошибка при добавлении данных')
           console.log(error)
         })
+      },
+      onSelectType: function (type) {
+        this.selectedType = type
       }
     }
   }
