@@ -11,16 +11,7 @@
                 <button v-on:click="add">add</button>
             </form>
         </div>
-        <div class="history">
-            <h2>History</h2>
-            <TypeFilter v-on:select="onSelectType" :selected-type="selectedType"></TypeFilter>
-            <ul>
-                <li v-for="transaction in filteredTransactions">
-                    {{ transaction.amount }}
-                    <span v-if="transaction.comment">({{ transaction.comment }})</span>
-                </li>
-            </ul>
-        </div>
+        <History v-bind:transactions="transactions"></History>
         <div class="summary">
             <div class="total">
                 <h2>Income</h2>
@@ -35,7 +26,8 @@
 </template>
 
 <script>
-  import TypeFilter from './TypeFilter'
+
+  import History from './History'
   const sum = (sum, trans) => {
     return sum + trans.amount
   }
@@ -43,7 +35,7 @@
 
   export default {
     name: 'Transactions',
-    components: { TypeFilter },
+    components: { History },
     data: () => {
       return {
         type: 'Income',
@@ -51,7 +43,6 @@
         comment: null,
         transactions: [],
         addInProgress: false,
-        selectedType: 'All',
       }
     },
     computed: {
@@ -67,15 +58,6 @@
       totalIncome: function () {
         return this.income.reduce(sum, 0)
       },
-      filteredTransactions: function () {
-        if (this.selectedType === 'Income') {
-          return this.income
-        }
-        if (this.selectedType === 'Expense') {
-          return this.expense
-        }
-        return this.transactions
-      }
     },
     mounted: function () {
       this.loadTransactions()
@@ -137,9 +119,6 @@
           return false
         })
       },
-      onSelectType: function (type) {
-        this.selectedType = type
-      }
     }
   }
 </script>
