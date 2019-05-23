@@ -2,17 +2,21 @@
     <div class="history">
         <h2>History</h2>
         <TypeFilter v-on:select="onSelectType" :selected-type="selectedType"></TypeFilter>
-        <ul>
-            <li v-for="transaction in filteredTransactions">
-                {{ transaction.amount }}
-                <span v-if="transaction.comment">({{ transaction.comment }})</span>
-            </li>
-        </ul>
+        <div v-for="[month, transactions] in groupedByMonths">
+            <h4>{{ month }}</h4>
+            <ul>
+                <li v-for="transaction in transactions">
+                    {{ transaction.amount }}
+                    <span v-if="transaction.comment">({{ transaction.comment }})</span>
+                </li>
+            </ul>
+        </div>
     </div>
 </template>
 
 <script>
   import TypeFilter from './TypeFilter'
+  import moment from 'moment'
 
   export default {
     name: 'History',
@@ -39,6 +43,17 @@
         }
         return this.transactions
       },
+      groupedByMonths: function () {
+        const map = new Map()
+        for (let transaction of this.filteredTransactions) {
+          let month = moment(transaction.created).format('MMMM YYYY')
+          if (!map.has(month)) {
+            map.set(month, [])
+          }
+          map.get(month).push(transaction)
+        }
+        return map
+      }
     },
     methods: {
       onSelectType: function (type) {

@@ -38,7 +38,7 @@ fastify.get('/', (request, reply) => {
 
 fastify.get('/transactions', (request, reply) => {
   db.all(
-    'SELECT amount, comment FROM transactions WHERE username = ? ORDER BY id', request.params.username, (err, rows) => {
+    'SELECT amount, comment, created FROM transactions WHERE username = ? ORDER BY id DESC', request.params.username, (err, rows) => {
       console.log(err)
       reply.send(rows)
     }
@@ -48,8 +48,8 @@ fastify.get('/transactions', (request, reply) => {
 fastify.post('/transactions', (request, reply) => {
   console.log(request.body)
   db.run(
-    "INSERT INTO transactions (username, amount, comment) VALUES (?, ?, ?)",
-    request.params.username, request.body.amount, request.body.comment
+    "INSERT INTO transactions (username, amount, comment, created) VALUES (?, ?, ?, ?)",
+    request.params.username, request.body.amount, request.body.comment, (new Date()).toISOString()
   )
   reply.send({status: 'ok'})
 })
