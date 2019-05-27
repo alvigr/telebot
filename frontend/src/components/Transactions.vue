@@ -150,7 +150,7 @@
     }
     button {
         height: 32px;
-        width: 64px;
+        min-width: 64px;
         color: #fff;
         background-color: #36ba53;
     }
