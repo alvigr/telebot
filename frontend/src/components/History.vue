@@ -83,6 +83,9 @@
         return tagsSet
       },
       filteredByTag: function () {
+        if (this.selectedTag === null) {
+          return this.filteredByType
+        }
         return this.filteredByType.filter(transaction => transaction.tags.includes(this.selectedTag))
       },
     },
