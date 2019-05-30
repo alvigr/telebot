@@ -27,7 +27,7 @@
     data: function () {
       return {
         selectedType: 'All',
-        selectedTag: 'food',
+        selectedTag: null,
         types: ['All', 'Income', 'Expense']
       }
     },

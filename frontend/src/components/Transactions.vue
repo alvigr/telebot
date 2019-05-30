@@ -7,7 +7,7 @@
                     <option>Expense</option>
                 </select>
                 <input class="amount" v-model="amount" type="number" placeholder="amount" v-bind:disabled="addInProgress"/>
-                <input v-model="comment" type="text" placeholder="comment" v-bind:disabled="addInProgress"/>
+                <input v-model="comment" type="text" placeholder="tags" v-bind:disabled="addInProgress"/>
                 <button v-on:click="add">add</button>
             </form>
         </div>
