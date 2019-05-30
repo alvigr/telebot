@@ -6,6 +6,7 @@
         <ButtonSelector v-on:select="onSelectTag" :selected="selectedTag" :choices="tags"></ButtonSelector>
         <div v-for="[month, transactions] in groupedByMonths">
             <h4>{{ month }}</h4>
+            <MonthTotal :transactions="transactions"></MonthTotal>
             <ul>
                 <li v-for="transaction in transactions">
                     {{ transaction.amount }}
@@ -19,10 +20,11 @@
 <script>
   import moment from 'moment'
   import ButtonSelector from './ButtonSelector'
+  import MonthTotal from './MonthTotal'
 
   export default {
     name: 'History',
-    components: { ButtonSelector },
+    components: { MonthTotal, ButtonSelector },
     props: ['transactions'],
     data: function () {
       return {
