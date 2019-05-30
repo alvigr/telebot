@@ -2,7 +2,7 @@
     <div class="history">
         <h2>History</h2>
         <ButtonSelector v-on:select="onSelectType" :selected="selectedType" :choices="types"></ButtonSelector>
-        <h4>Tags</h4>
+        <h3>Tags</h3>
         <ButtonSelector v-on:select="onSelectTag" :selected="selectedTag" :choices="tags"></ButtonSelector>
         <div v-for="[month, transactions] in groupedByMonths">
             <h4>{{ month }}</h4>

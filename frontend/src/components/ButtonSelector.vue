@@ -14,7 +14,11 @@
     props: ['selected', 'choices'],
     methods: {
       select: function (choice) {
-        this.$emit('select', choice)
+        if (choice === this.selected) {
+          this.$emit('select', null)
+        } else {
+          this.$emit('select', choice)
+        }
       }
     }
   }
