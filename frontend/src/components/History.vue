@@ -1,8 +1,9 @@
 <template>
     <div class="history">
         <h2>History</h2>
-        <TypeFilter v-on:select="onSelectType" :selected-type="selectedType"></TypeFilter>
-        <Tags v-on:select="onSelectTag" :selected-tag="selectedTag" :tags="tags"></Tags>
+        <ButtonSelector v-on:select="onSelectType" :selected="selectedType" :choices="types"></ButtonSelector>
+        <h4>Tags</h4>
+        <ButtonSelector v-on:select="onSelectTag" :selected="selectedTag" :choices="tags"></ButtonSelector>
         <div v-for="[month, transactions] in groupedByMonths">
             <h4>{{ month }}</h4>
             <ul>
@@ -16,18 +17,18 @@
 </template>
 
 <script>
-  import TypeFilter from './TypeFilter'
   import moment from 'moment'
-  import Tags from './Tags'
+  import ButtonSelector from './ButtonSelector'
 
   export default {
     name: 'History',
-    components: { Tags, TypeFilter },
+    components: { ButtonSelector },
     props: ['transactions'],
     data: function () {
       return {
         selectedType: 'All',
         selectedTag: 'food',
+        types: ['All', 'Income', 'Expense']
       }
     },
     computed: {
