@@ -1,7 +1,7 @@
 <template>
     <div>
-        <div class="form">
-            <form>
+        <div>
+            <form class="form">
                 <select v-model="type" v-bind:disabled="addInProgress">
                     <option>Income</option>
                     <option>Expense</option>
@@ -12,30 +12,18 @@
             </form>
         </div>
         <History v-bind:transactions="transactions" v-on:delete="deleteTransaction"></History>
-        <div class="summary">
-            <div class="total">
-                <h2>Income</h2>
-                <span>{{ totalIncome }}</span>
-            </div>
-            <div class="total">
-                <h2>Expense</h2>
-                <span>{{ totalExpense }}</span>
-            </div>
-        </div>
+        <Total v-bind:transactions="transactions"></Total>
     </div>
 </template>
 
 <script>
 
   import History from './History'
-  const sum = (sum, trans) => {
-    return sum + trans.amount
-  }
-
+  import Total from './Total'
 
   export default {
     name: 'Transactions',
-    components: { History },
+    components: { Total, History },
     data: () => {
       return {
         type: 'Income',
@@ -44,20 +32,6 @@
         transactions: [],
         addInProgress: false,
       }
-    },
-    computed: {
-      expense: function () {
-        return this.transactions.filter(trans => trans.amount < 0)
-      },
-      income: function () {
-        return this.transactions.filter(trans => trans.amount > 0)
-      },
-      totalExpense: function () {
-        return this.expense.reduce(sum, 0) * (-1)
-      },
-      totalIncome: function () {
-        return this.income.reduce(sum, 0)
-      },
     },
     mounted: function () {
       this.loadTransactions()
@@ -157,8 +131,5 @@
         min-width: 64px;
         color: #fff;
         background-color: #36ba53;
-    }
-    .summary {
-        text-align: right;
     }
 </style>

@@ -4,8 +4,8 @@
       <div class="header">
         <h1>MoneyTracker</h1>
       </div>
-      <User></User>
-      <Transactions v-if="$user.authenticated"></Transactions>
+      <User class="user"></User>
+      <Transactions v-if="$user.authenticated" class="transactions"></Transactions>
     </div>
   </div>
 </template>
@@ -31,20 +31,21 @@ export default {
 body {
   margin: 0;
 }
-.header { grid-area: header; }
-
+.header {
+  grid-area: header;
+}
 .grid-container {
   display: grid;
+  grid-template-columns: 65% auto;
+  grid-template-rows: 124px auto;
   grid-template-areas:
-          'header header header header header header header header'
-          'form form form form form summary summary summary'
-          'history history history history history summary summary summary';
+          'header user'
+          'transactions transactions';
   grid-gap: 16px;
   padding: 16px;
   max-width: 784px;
   margin: auto;
 }
-
 .grid-container {
   font-size: 16px;
 }
