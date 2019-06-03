@@ -8,9 +8,19 @@
             <h4>{{ month }}</h4>
             <MonthTotal :transactions="transactions"></MonthTotal>
             <ul>
-                <li v-for="transaction in transactions">
+                <li
+                        class="transaction"
+                        v-for="transaction in transactions"
+                        v-on:mouseover="onHoverTransaction(transaction)"
+                        v-on:mouseleave="onLeaveTransaction"
+                >
                     {{ transaction.amount }}
                     <span v-if="transaction.comment">({{ transaction.comment }})</span>
+                    <button
+                            class="button-delete"
+                            v-show="hoveredTransaction === transaction"
+                            v-on:click="deleteTransaction(transaction)"
+                    >x</button>
                 </li>
             </ul>
         </div>
@@ -30,7 +40,8 @@
       return {
         selectedType: 'All',
         selectedTag: null,
-        types: ['All', 'Income', 'Expense']
+        types: ['All', 'Income', 'Expense'],
+        hoveredTransaction: null
       }
     },
     computed: {
@@ -97,11 +108,28 @@
       },
       onSelectTag: function (tag) {
         this.selectedTag = tag
+      },
+      onHoverTransaction: function (transaction) {
+        this.hoveredTransaction = transaction
+      },
+      onLeaveTransaction: function () {
+        this.hoveredTransaction = null
+      },
+      deleteTransaction: function (transaction) {
+        this.$emit('delete', transaction)
       }
     }
   }
 </script>
 
 <style scoped>
-
+    .button-delete {
+        min-width: auto;
+        height: 22px;
+        margin: 0 0 0 4px;
+        line-height: 16px;
+    }
+    .transaction {
+        line-height: 24px;
+    }
 </style>

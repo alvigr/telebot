@@ -11,7 +11,7 @@
                 <button v-on:click="add">add</button>
             </form>
         </div>
-        <History v-bind:transactions="transactions"></History>
+        <History v-bind:transactions="transactions" v-on:delete="deleteTransaction"></History>
         <div class="summary">
             <div class="total">
                 <h2>Income</h2>
@@ -119,6 +119,10 @@
           return false
         })
       },
+      deleteTransaction: function (transaction) {
+        this.transactions = this.transactions.filter(current => current !== transaction)
+        //TODO: сделать удаление на сервере
+      }
     }
   }
 </script>
