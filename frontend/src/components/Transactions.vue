@@ -1,7 +1,7 @@
 <template>
     <div>
-        <div>
-            <form class="form">
+        <div class="form">
+            <form>
                 <select v-model="type" v-bind:disabled="addInProgress">
                     <option>Income</option>
                     <option>Expense</option>
@@ -11,8 +11,8 @@
                 <button v-on:click="add">add</button>
             </form>
         </div>
-        <History v-bind:transactions="transactions" v-on:delete="deleteTransaction"></History>
-        <Total v-bind:transactions="transactions"></Total>
+        <Total v-bind:transactions="transactions" class="total"></Total>
+        <History v-bind:transactions="transactions" v-on:delete="deleteTransaction" class="history"></History>
     </div>
 </template>
 
@@ -131,5 +131,9 @@
         min-width: 64px;
         color: #fff;
         background-color: #36ba53;
+        transition: 0.3s;
+    }
+    button:hover {
+        background-color: #2a9241;
     }
 </style>

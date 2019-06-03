@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="user">
         <Profile v-if="$user.authenticated"></Profile>
         <Login v-if="!$user.authenticated"></Login>
     </div>

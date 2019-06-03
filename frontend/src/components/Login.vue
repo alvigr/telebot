@@ -1,5 +1,5 @@
 <template>
-    <form v-on:submit.prevent="login">
+    <form v-on:submit.prevent="login" class="login">
         <label>
             Username:
             <input type="text" name="username" v-model="username"/>
@@ -38,5 +38,22 @@
 </script>
 
 <style scoped>
-
+    .login {
+        margin-top: 40px;
+        width: 100%;
+    }
+    .login label {
+        display: block;
+        width: 100%;
+        margin-top: 16px;
+    }
+    .login label input{
+        display: block;
+        width: 100%;
+        margin-bottom: 32px;
+    }
+    .login button{
+        display: block;
+        width: 100%;
+    }
 </style>
