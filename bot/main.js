@@ -1,7 +1,8 @@
 const Telegraf = require('telegraf')
 const store = require('./store.js')
+require('dotenv').config()
 
-const bot = new Telegraf('874168391:AAFNfF0eMO-zd-KwyorWvnYpogGERwZJ5RI')
+const bot = new Telegraf(process.env.TELEGRAM_KEY)
 
 const getRandomInt = (min, max) => {
   return Math.floor(Math.random() * (max - min)) + min
