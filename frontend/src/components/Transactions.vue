@@ -12,7 +12,7 @@
             </form>
         </div>
         <Total v-bind:transactions="transactions" class="total"></Total>
-        <History v-bind:transactions="transactions" v-on:delete="deleteTransaction" class="history"></History>
+        <History v-bind:transactions="transactions" v-on:delete="deleteTransaction"></History>
     </div>
 </template>
 

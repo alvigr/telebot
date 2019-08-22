@@ -46,7 +46,6 @@ body {
   padding: 16px;
   max-width: 784px;
   margin: auto;
-  justify-items: end;
 }
 .transactions {
   display: grid;
